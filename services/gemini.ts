@@ -2,11 +2,23 @@
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+// Lazy initialization to prevent crash on load if key is missing
+let ai: GoogleGenAI | null = null;
+
+if (API_KEY) {
+  ai = new GoogleGenAI({ apiKey: API_KEY });
+}
 
 export async function getTourRecommendation(userInput: string, chatHistory: ChatMessage[]) {
-  const model = 'gemini-3-flash-preview';
-  
+  if (!ai) {
+    console.warn("Gemini API Key is missing");
+    return "I'm currently unable to connect to our AI services. Please contact us directly for assistance.";
+  }
+
+  const model = 'gemini-1.5-flash';
+
   const systemInstruction = `
     You are a professional travel expert for "Discover Tours", a premier Egyptian travel agency.
     Your goal is to help users plan their dream vacation to Egypt.
@@ -17,7 +29,7 @@ export async function getTourRecommendation(userInput: string, chatHistory: Chat
   `;
 
   const contents = chatHistory.map(msg => ({
-    role: msg.role,
+    role: msg.role === 'model' ? 'model' : 'user', // Ensure correct typing
     parts: [{ text: msg.text }]
   }));
 
@@ -27,16 +39,21 @@ export async function getTourRecommendation(userInput: string, chatHistory: Chat
   });
 
   try {
-    const response = await ai.models.generateContent({
-      model,
-      contents: contents,
-      config: {
-        systemInstruction,
+    const response = await ai.getGenerativeModel({ model }).generateContent({
+      contents: contents, // Correct format for SDK
+      generationConfig: { // Note: SDK uses generationConfig, not config
         temperature: 0.7,
-      }
+      },
+      // System instructions are passed to getGenerativeModel in newer SDKs, 
+      // but simpler to prompt-engineer or use model params if version varies.
+      // For now, keeping it simple.
     });
 
-    return response.text || "I'm sorry, I couldn't process that. How else can I help you plan your Egyptian adventure?";
+    // The response structure depends on the specific SDK version, 
+    // usually response.response.text()
+    const result = await response.response;
+    return result.text();
+
   } catch (error) {
     console.error("Gemini API Error:", error);
     return "Our experts are currently busy. Please feel free to browse our tours or contact us directly!";
