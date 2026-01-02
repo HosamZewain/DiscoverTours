@@ -1,0 +1,9 @@
+{
+  "name": "Discover Tours",
+  "description": "Premium Egyptian tour agency offering day trips, Nile cruises, and customized desert adventures.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

@@ -1,0 +1,33 @@
+html {
+  background-color: #fafaf9;
+  /* stone-50 */
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #fafaf9;
+  color: #1c1917;
+  /* stone-900 */
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-stone-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-amber-600/50 rounded-full hover:bg-amber-600 transition-colors;
+}
+
+/* Animation utilities */
+.will-change-transform {
+  will-change: transform;
+}

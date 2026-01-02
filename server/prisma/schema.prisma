@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tour {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  duration    String
+  image       String
+  category    String
+  rating      Float     @default(0)
+  reviews     Int       @default(0)
+  tags        String    // Stored as JSON string or comma-separated
+  
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  destinationId String?
+  destination   Destination? @relation(fields: [destinationId], references: [id])
+}
+
+model Destination {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String
+  image       String    // Thumbnail/Card image
+  headerImage String?   // Large hero image for details page
+  content     String?   // HTML or Markdown content
+  
+  tours       Tour[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String
+  phone     String
+  date      DateTime
+  guests    Int
+  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  totalPrice Float
+  
+  tourId    String
+  tour      Tour     @relation(fields: [tourId], references: [id])
+  
+  receiptImage String?  // URL/Path to uploaded receipt
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      String   @default("ADMIN")
+}
+
+model Settings {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
