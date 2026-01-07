@@ -19,18 +19,17 @@ echo "Building backend..."
 cd server
 npm install --legacy-peer-deps
 npm run build
+    # Restart backend service
+    # We do this inside the server directory so PM2 picks up .env correctly
+    if command -v pm2 &> /dev/null; then
+        echo "Restarting backend with PM2..."
+        # Delete existing process to ensure CWD is updated to server/
+        pm2 delete discover-tours-api 2> /dev/null || true
+        pm2 start dist/index.js --name discover-tours-api
+        pm2 save
+    else
+        echo "PM2 not found. Please ensure your backend is running."
+    fi
 cd ..
-
-# Restart backend service
-# Assuming PM2 is used with a process name like 'discover-tours-api'
-# If not using PM2, adjust accordingly
-if command -v pm2 &> /dev/null; then
-    echo "Restarting backend with PM2..."
-    # Check if process exists to decide between start or restart would be better, 
-    # but restart is safer if we know the name
-    pm2 restart discover-tours-api || pm2 start server/dist/index.js --name discover-tours-api
-else
-    echo "PM2 not found. Please ensure your backend is running."
-fi
 
 echo "Deployment complete! Don't forget to reload Nginx if you changed the config: sudo systemctl reload nginx"
