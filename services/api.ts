@@ -39,6 +39,10 @@ export const authService = {
     login: async (credentials: any): Promise<any> => {
         const response = await api.post('/auth/login', credentials);
         return response.data;
+    },
+    updateProfile: async (data: any): Promise<any> => {
+        const response = await api.put('/auth/update', data);
+        return response.data;
     }
 };
 

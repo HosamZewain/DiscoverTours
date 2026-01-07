@@ -7,6 +7,7 @@ import HomeEditor from './HomeEditor';
 import DestinationsEditor from './DestinationsEditor';
 import PagesEditor from './PagesEditor';
 import TestimonialsEditor from './TestimonialsEditor';
+import ProfileEditor from './ProfileEditor';
 import AdminSidebar from './AdminSidebar';
 
 const AdminDashboard: React.FC = () => {
@@ -24,6 +25,7 @@ const AdminDashboard: React.FC = () => {
             case 'destinations': return 'Destinations';
             case 'pages': return 'Static Pages';
             case 'testimonials': return 'Reviews & Testimonials';
+            case 'profile': return 'Admin Profile';
             default: return 'Dashboard';
         }
     };
@@ -67,6 +69,7 @@ const AdminDashboard: React.FC = () => {
                             <Route path="destinations" element={<DestinationsEditor />} />
                             <Route path="pages" element={<PagesEditor />} />
                             <Route path="testimonials" element={<TestimonialsEditor />} />
+                            <Route path="profile" element={<ProfileEditor />} />
                             <Route path="*" element={<Navigate to="bookings" replace />} />
                         </Routes>
                     </div>
