@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { destinationService } from '../../services/api';
 
 interface Destination {
@@ -98,6 +100,23 @@ const DestinationsEditor: React.FC = () => {
         }
     };
 
+    const modules = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+        ],
+    };
+
+    const formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image'
+    ];
+
     if (loading) return <div>Loading...</div>;
 
     return (
@@ -164,13 +183,17 @@ const DestinationsEditor: React.FC = () => {
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-xs font-bold text-stone-500 uppercase mb-1">Full Page Content (HTML/Markdown)</label>
-                            <textarea
-                                rows={6}
-                                value={editingDest.content || ''}
-                                onChange={e => setEditingDest({ ...editingDest, content: e.target.value })}
-                                className="w-full p-2 border border-stone-200 rounded font-mono text-sm"
-                            />
+                            <label className="block text-xs font-bold text-stone-500 uppercase mb-1">Full Page Content</label>
+                            <div className="bg-white">
+                                <ReactQuill
+                                    theme="snow"
+                                    value={editingDest.content || ''}
+                                    onChange={(content) => setEditingDest({ ...editingDest, content })}
+                                    modules={modules}
+                                    formats={formats}
+                                    className="h-64 mb-12"
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="flex gap-3">
