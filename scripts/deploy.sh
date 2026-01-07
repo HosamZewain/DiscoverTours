@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit on error
+set -e
+
 # Navigate to project directory
 cd /var/www/discover-tours
 
@@ -8,13 +11,13 @@ git pull origin main
 
 # Install dependencies and build frontend
 echo "Building frontend..."
-npm install
+npm install --legacy-peer-deps
 npm run build
 
 # Install dependencies and build backend
 echo "Building backend..."
 cd server
-npm install
+npm install --legacy-peer-deps
 npm run build
 cd ..
 
@@ -23,6 +26,8 @@ cd ..
 # If not using PM2, adjust accordingly
 if command -v pm2 &> /dev/null; then
     echo "Restarting backend with PM2..."
+    # Check if process exists to decide between start or restart would be better, 
+    # but restart is safer if we know the name
     pm2 restart discover-tours-api || pm2 start server/dist/index.js --name discover-tours-api
 else
     echo "PM2 not found. Please ensure your backend is running."
