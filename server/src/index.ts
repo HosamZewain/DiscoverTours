@@ -1,9 +1,11 @@
+import 'dotenv/config'; // Load env vars immediately
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
-dotenv.config();
+console.log('--- BACKEND STARTING ---');
+console.log('CWD:', process.cwd());
+console.log('DATABASE_URL set:', !!process.env.DATABASE_URL);
 
 const app = express();
 const prisma = new PrismaClient();
